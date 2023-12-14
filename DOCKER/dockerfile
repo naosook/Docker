@@ -1,0 +1,21 @@
+    FROM ubuntu:latest
+RUN apt-get update && apt-get install -y apache2
+CMD ["apache2ctl", "-D", "FOREGROUND"]
+
+
+# criando o arquivo de configuração do apache. Subistitual o conteúdo desta parte com as configurações de sua preferência
+RUN echo "<VirtualHost *:80>\n\
+    ServerAdmin camp.amandas@gmail.com\n\
+    ServerName mysite.com\n\
+    ServerAlias www.mysite.com\n\
+    DocumentRoot /var/www/sitehtml/\n\
+    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
+    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
+</VirtualHost>" > /etc/apache2/sites-available/mylogin.com.conf
+
+# ativando o arquivo de configuração criado e desativando o arquivo padrão
+RUN a2dissite 000-default.conf
+RUN a2ensite mylogin.com.conf
+
+# clonando o repositório contendo a página html. Subistitua o Link abaixo com o de seu repositório em que sua página está.
+COPY sitehtml/ /var/www/sitehtml
